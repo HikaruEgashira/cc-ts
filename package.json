@@ -31,7 +31,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "cc-ts",
+  "name": "@ehika/cc-ts",
   "author": "HikaruEgashira",
   "module": "dist/cc-ts.esm.js",
   "size-limit": [
