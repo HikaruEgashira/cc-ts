@@ -5,29 +5,39 @@ implements Clean Architecture in TypeScript.
 ## usecase
 
 ```typescript
-import { UseCase } from '../src';
+import { UseCase } from '@ehika/cc-ts';
 
-// make input controller
-const counterGateway = {
-  value: 8,
-};
-type CounterGateway = typeof counterGateway;
-
-// make usecase
-type I = { counterGateway: CounterGateway };
-type O = number;
-class addCount implements UseCase<I, O> {
-  async handle({ counterGateway }: I) {
-    const currentNumber = counterGateway.value;
-    return currentNumber + 1;
+// adapter
+class Counter {
+  count = 8;
+  getValue() {
+    return this.count;
+  }
+  setValue(value: number) {
+    this.count = value;
   }
 }
 
+// usecase
+type I = { counter: Counter };
+class AddCount implements UseCase<I> {
+  async handle({ counter }: I) {
+    const currentNumber = counter.getValue();
+    counter.setValue(currentNumber + 1);
+  }
+}
+
+let counter!: Counter;
+
 describe(UseCase.name, () => {
+  beforeEach(() => {
+    counter = new Counter();
+  });
+
   it('should return 9, when called addCount', async () => {
-    // call usecase
-    const res = await new addCount().handle({ counterGateway });
-    expect(res).toBe(9);
+    const addCountUsecase = new AddCount();
+    await addCountUsecase.handle({ counter });
+    expect(counter.getValue()).toBe(9);
   });
 });
 ```
