@@ -1,4 +1,4 @@
-export abstract class UseCase<InputPort extends Object, OutputPort = void> {
+export abstract class UseCase<InputPort = {}, OutputPort = void> {
   abstract handle(controller: InputPort): Promise<OutputPort>;
 }
 
