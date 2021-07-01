@@ -1,4 +1,4 @@
-import { flow } from 'fp-ts/function';
+import { flow, pipe } from 'fp-ts/function';
 import * as T from 'fp-ts/Task';
 
 /**
@@ -13,16 +13,26 @@ export interface UseCase<Ports, A> {
   (ports: Ports): T.Task<A>;
 }
 
+/**
+ * Functor for UseCase
+ */
 const map: <Ports, A, B>(
   f: (a: A) => B
 ) => (fa: UseCase<Ports, A>) => UseCase<Ports, B> = f => fa =>
   flow(fa, T.map(f));
 
-declare const chain: <Ports, A, B>(
-  f: (a: A) => UseCase<Ports, B>
-) => (ma: UseCase<Ports, A>) => UseCase<Ports, B>;
+/**
+ * Monad for UseCase
+ */
+const chain = <Ports, A, B>(f: (a: A) => UseCase<Ports, B>) => (
+  ma: UseCase<Ports, A>
+): UseCase<Ports, B> => (ports: Ports): T.Task<B> =>
+  pipe(
+    ma(ports),
+    T.chain((a: A): T.Task<B> => f(a)(ports))
+  );
 
 export const UseCase = {
   map,
-  // chain,
+  chain,
 };

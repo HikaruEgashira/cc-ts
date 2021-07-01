@@ -7,8 +7,14 @@ const db = {
     get: () => 8,
   },
 };
+const date = {
+  now: {
+    get: () => new Date('2021/02/02'),
+  },
+};
 const ports = {
   db,
+  date,
 };
 type Ports = typeof ports;
 
@@ -31,5 +37,18 @@ describe('UseCase', () => {
 
     const count = await incrementCountUsecase(ports)();
     expect(count).toBe(9);
+  });
+
+  it('chain', async () => {
+    const displayUseCase = pipe(
+      getCountUsecase,
+      UseCase.chain((count: number) => ({ date }: Ports) => async () => {
+        const now = date.now.get().toISOString();
+        return `Today is ${count}: ${now}`;
+      })
+    );
+    const res = await displayUseCase(ports)();
+
+    expect(res).toBe('Today is 8: 2021-02-01T15:00:00.000Z');
   });
 });
