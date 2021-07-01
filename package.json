@@ -48,5 +48,8 @@
   },
   "dependencies": {
     "fp-ts": "^2.10.5"
+  },
+  "jest": {
+    "globalSetup": "./jest-setup.js"
   }
 }
