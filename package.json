@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build",
+    "build": "tsc",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
@@ -27,7 +27,6 @@
   },
   "name": "@hikae/cc-ts",
   "author": "HikaruEgashira",
-  "module": "dist/cc-ts.esm.js",
   "size-limit": [
     {
       "path": "dist/cc-ts.cjs.production.min.js",
