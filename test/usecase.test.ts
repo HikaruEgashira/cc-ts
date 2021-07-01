@@ -1,35 +1,35 @@
 import { UseCase } from '../src';
+import { pipe } from 'fp-ts/function';
 
 // mock
-class Counter {
-  count = 8;
-  getValue() {
-    return this.count;
-  }
-  setValue(value: number) {
-    this.count = value;
-  }
-}
+const db = {
+  counter: {
+    get: () => 8,
+  },
+};
+const ports = {
+  db,
+};
+type Ports = typeof ports;
 
-// mock usecase
-type I = { counter: Counter };
-class AddCount implements UseCase<I> {
-  async handle({ counter }: I) {
-    const currentNumber = counter.getValue();
-    counter.setValue(currentNumber + 1);
-  }
-}
+// usecase
+const getCountUsecase: UseCase<Ports, number> = ({ db }) => async () => {
+  return db.counter.get();
+};
 
-let counter!: Counter;
-
-describe(UseCase.name, () => {
-  beforeEach(() => {
-    counter = new Counter();
+describe('UseCase', () => {
+  it('should return 8, when called getCountUsecase', async () => {
+    const count = await getCountUsecase(ports)();
+    expect(count).toBe(8);
   });
 
-  it('should return 9, when called addCount', async () => {
-    const addCountUsecase = new AddCount();
-    await addCountUsecase.handle({ counter });
-    expect(counter.getValue()).toBe(9);
+  it('map', async () => {
+    const incrementCountUsecase = pipe(
+      getCountUsecase,
+      UseCase.map(v => v + 1)
+    );
+
+    const count = await incrementCountUsecase(ports)();
+    expect(count).toBe(9);
   });
 });
