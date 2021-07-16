@@ -1,5 +1,5 @@
 import { either } from 'fp-ts';
-import { UseCase } from '.';
+import { useCase } from '.';
 
 let p = {};
 
@@ -18,7 +18,7 @@ export class Ports<A> {
       : either.right(this.ports);
   }
 
-  async run<A>(u: UseCase<unknown, A>): Promise<A> {
+  async run<A>(u: useCase.UseCase<unknown, A>): Promise<A> {
     const ports = this.getPorts();
     return await u(ports)();
   }

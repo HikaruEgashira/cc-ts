@@ -1,5 +1,5 @@
 import { flow, pipe } from 'fp-ts/function';
-import * as T from 'fp-ts/Task';
+import { task } from 'fp-ts';
 
 /**
  * @description portsを引数に取り非同期関数を返す
@@ -10,29 +10,24 @@ import * as T from 'fp-ts/Task';
  * const count = await getCountUsecase(ports)();
  */
 export interface UseCase<Ports, A> {
-  (ports: Ports): T.Task<A>;
+  (ports: Ports): task.Task<A>;
 }
 
 /**
  * Functor for UseCase
  */
-const map: <Ports, A, B>(
+export const map: <Ports, A, B>(
   f: (a: A) => B
 ) => (fa: UseCase<Ports, A>) => UseCase<Ports, B> = f => fa =>
-  flow(fa, T.map(f));
+  flow(fa, task.map(f));
 
 /**
  * Monad for UseCase
  */
-const chain = <Ports, A, B>(f: (a: A) => UseCase<Ports, B>) => (
+export const chain = <Ports, A, B>(f: (a: A) => UseCase<Ports, B>) => (
   ma: UseCase<Ports, A>
-): UseCase<Ports, B> => (ports: Ports): T.Task<B> =>
+): UseCase<Ports, B> => (ports: Ports): task.Task<B> =>
   pipe(
     ma(ports),
-    T.chain((a: A): T.Task<B> => f(a)(ports))
+    task.chain((a: A): task.Task<B> => f(a)(ports))
   );
-
-export const UseCase = {
-  map,
-  chain,
-};
