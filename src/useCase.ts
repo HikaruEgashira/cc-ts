@@ -31,3 +31,14 @@ export const chain = <Ports, A, B>(f: (a: A) => UseCase<Ports, B>) => (
     ma(ports),
     task.chain((a: A): task.Task<B> => f(a)(ports))
   );
+
+/**
+ * Pointed for UseCase
+ */
+export const of = <A>(a: A): UseCase<{}, A> => ({}) => task.of(a);
+
+// -------------------------------------------------------------------------------------
+// do notation
+// -------------------------------------------------------------------------------------
+
+export const Do = of({});

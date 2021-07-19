@@ -1,4 +1,4 @@
-import { UseCase } from '../src';
+import { useCase } from '../src';
 import { pipe } from 'fp-ts/function';
 
 // mock
@@ -19,7 +19,9 @@ const ports = {
 type Ports = typeof ports;
 
 // usecase
-const getCountUsecase: UseCase<Ports, number> = ({ db }) => async () => {
+const getCountUsecase: useCase.UseCase<Ports, number> = ({
+  db,
+}) => async () => {
   return db.counter.get();
 };
 
@@ -32,7 +34,7 @@ describe('UseCase', () => {
   it('map', async () => {
     const incrementCountUsecase = pipe(
       getCountUsecase,
-      UseCase.map(v => v + 1)
+      useCase.map(v => v + 1)
     );
 
     const count = await incrementCountUsecase(ports)();
@@ -42,7 +44,7 @@ describe('UseCase', () => {
   it('chain', async () => {
     const displayUseCase = pipe(
       getCountUsecase,
-      UseCase.chain((count: number) => ({ date }: Ports) => async () => {
+      useCase.chain((count: number) => ({ date }: Ports) => async () => {
         const now = date.now.get().toISOString();
         return `Today is ${count}: ${now}`;
       })
