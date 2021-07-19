@@ -26,19 +26,13 @@ export const map: <Ports, A, B>(
  */
 export const chain = <Ports, A, B>(f: (a: A) => UseCase<Ports, B>) => (
   ma: UseCase<Ports, A>
-): UseCase<Ports, B> => (ports: Ports): task.Task<B> =>
+): UseCase<Ports, B> => (ports: Ports) =>
   pipe(
     ma(ports),
-    task.chain((a: A): task.Task<B> => f(a)(ports))
+    task.chain((a: A) => f(a)(ports))
   );
 
 /**
  * Pointed for UseCase
  */
-export const of = <A>(a: A): UseCase<{}, A> => ({}) => task.of(a);
-
-// -------------------------------------------------------------------------------------
-// do notation
-// -------------------------------------------------------------------------------------
-
-export const Do = of({});
+export const of = <A, Ports>(a: A): UseCase<Ports, A> => () => task.of(a);
